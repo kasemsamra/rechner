@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netto zu Brutto Rechner</title>
+    <meta name="author" content="KasemSamra">
+    <link rel="stylesheet" href="netto/styles.css">
+    <link rel="icon" href="img/icon.png">
+</head>
+<body>
+    <div class="header-container">
+        <button class="zuruck" onclick="index()">
+            <i class="gg-arrow-left-r"></i>
+            <span class="zuru">Zurück</span>
+        </button>
+        <div class="h1div">
+            <h1>Netto zu Brutto Rechner</h1>
+        </div>
+    </div>
+
+    <form id="price-form">
+        <div class="form-container">
+            <div class="form-section">
+                <h2>Strom</h2>
+                <label for="strom-netto">Arbeitspreis (Netto) in €/kWh:</label>
+                <input type="number" id="strom-netto" step="0.01">
+                
+                <label for="strom-grundpreis-netto">Grundpreis (Netto) in €:</label>
+                <input type="number" id="strom-grundpreis-netto" step="0.01">
+            </div>
+        
+            <div class="form-section">
+                <h2>Gas</h2>
+                <label for="gas-netto">Arbeitspreis (Netto) in €/kWh:</label>
+                <input type="number" id="gas-netto" step="0.01">
+                
+                <label for="gas-grundpreis-netto">Grundpreis (Netto) in €:</label>
+                <input type="number" id="gas-grundpreis-netto" step="0.01">
+            </div>
+        </div>
+        
+        <button class="berechnen" type="submit">Berechne Brutto Preis</button>
+    </form>
+
+    <div id="result">
+        <h2>Ergebnisse</h2>
+        <table>
+            <tr>
+                <th>Typ</th>
+                <th></th>
+                <th>Brutto</th>
+            </tr>
+            <tr>
+                <td>Strom Arbeitspreis in €/kWh</td>
+                <td><span id="strom-netto-display"></span></td>
+                <td><span id="strom-brutto"></span></td>
+            </tr>
+            <tr>
+                <td>Strom Grundpreis in €</td>
+                <td><span id="strom-grundpreis-netto-display"></span></td>
+                <td><span id="strom-grundpreis-brutto"></span></td>
+            </tr>
+            <tr>
+                <td>Gas Arbeitspreis in €/kWh</td>
+                <td><span id="gas-netto-display"></span></td>
+                <td><span id="gas-brutto"></span></td>
+            </tr>
+            <tr>
+                <td>Gas Grundpreis in €</td>
+                <td><span id="gas-grundpreis-netto-display"></span></td>
+                <td><span id="gas-grundpreis-brutto"></span></td>
+            </tr>
+        </table>
+    </div>
+    
+
+    <script src="netto/script.js"></script>
+</body>
+</html>

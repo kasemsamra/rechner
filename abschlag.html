@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Abschlag Check</title>
+    <meta name="author" content="KasemSamra">
+    <link rel="stylesheet" href="abschlag/styles.css">
+    <link rel="icon" href="img/icon.png">
+</head>
+
+<body>
+    <div class="header-container">
+        <button class="zuruck" onclick="index()">
+            <i class="gg-arrow-left-r"></i>
+            <span class="zuru">Zurück</span>
+        </button>
+        <div class="h1div">
+            <h1>Abschlag Check</h1>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button class="toggle-btn" onclick="toggleContent(1)">Stromrechner ET</button>
+        <button class="toggle-btn" onclick="toggleContent(2)">Stromrechner DT</button>
+        <button class="toggle-btn" onclick="toggleContent(3)">Gasrechner</button>
+    </div>
+
+    <div class="content" id="content-1">
+        <div class="container">
+            <h1>Stromrechner ET</h1>
+
+            <div class="input-section">
+                <label for="verbrauch"><b>kWh/Jahr</b></label>
+                <input type="number" id="verbrauch" placeholder="z.B. 2500">
+
+                <label for="arbeitspreis"><b>Arbeitspreis</b></label>
+                <input type="number" id="arbeitspreis" placeholder="z.B. 28,79" step="0.01">
+
+                <label for="grundpreis"><b>Grundpreis</b></label>
+                <input type="number" id="grundpreis" placeholder="z.B. 123,96" step="0.01">
+
+                <button class="button" onclick="calculate()">Berechnen</button>
+            </div>
+
+            <div id="result">
+                <h2>Ergebnisse</h2>
+                <table>
+                    <tr>
+                        <th>Beschreibung</th>
+                        <th></th>
+                        <th>Betrag in EUR</th>
+                    </tr>
+                    <tr>
+                        <td>Summe jährlich</td>
+                        <td></td>
+                        <td><span id="summe-jaehrlich"></span></td>
+
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (11 Abschläge)</td>
+                        <td></td>
+                        <td><span id="abschlag-11"></span></td>
+
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (12 Abschläge)</td>
+                        <td></td>
+                        <td><span id="abschlag-12"></span></td>
+
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+    </div>
+    <div class="content" id="content-2">
+        <h1>Stromrechner DT</h1>
+        <div class="input-section">
+            <div class="input-group">
+                <div class="input-container">
+                    <label for="ht-verbrauch-nt"><b>kWh/Jahr (HT)</b></label>
+                    <input type="number" id="ht-verbrauch-nt" placeholder="z.B. 1500">
+                </div>
+
+                <div class="input-container">
+                    <label class="label" for="nt-verbrauch-nt"><b>kWh/Jahr (NT)</b></label>
+                    <input type="number" id="nt-verbrauch-nt" placeholder="z.B. 1000">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <div class="input-container">
+                    <label class="label" for="ht-arbeitspreis-nt"><b>Arbeitspreis HT</b></label>
+                    <input type="number" id="ht-arbeitspreis-nt" placeholder="z.B. 28,79" step="0.01">
+                </div>
+
+                <div class="input-container">
+                    <label class="label" for="nt-arbeitspreis-nt"><b>Arbeitspreis NT</b></label>
+                    <input type="number" id="nt-arbeitspreis-nt" placeholder="z.B. 18,79" step="0.01">
+                </div>
+            </div>
+
+
+            <label for="grundpreis-nt"><b>Grundpreis</b></label>
+            <input type="number" id="grundpreis-nt" placeholder="z.B. 123,96" step="0.01">
+
+            <button class="button" onclick="calculateHTNT()">Berechnen</button>
+        </div>
+
+        <div id="result-nt">
+            <h2>Ergebnisse</h2>
+            <table>
+                <tr>
+                    <th>Beschreibung</th>
+                    <th></th>
+                    <th>Betrag in EUR</th>
+                </tr>
+                <tr>
+                    <td>Summe jährlich</td>
+                    <td></td>
+                    <td><span id="summe-jaehrlich-nt"></span></td>
+                </tr>
+                <tr>
+                    <td>Monatlicher Abschlag (11 Abschläge)</td>
+                    <td></td>
+                    <td><span id="abschlag-11-nt"></span></td>
+                </tr>
+                <tr>
+                    <td>Monatlicher Abschlag (12 Abschläge)</td>
+                    <td></td>
+                    <td><span id="abschlag-12-nt"></span></td>
+                </tr>
+            </table>
+        </div>
+
+
+
+    </div>
+    <div class="content" id="content-3">
+        <div class="container">
+            <h1>Gaspreisrechner</h1>
+    
+            <div class="input-section">
+                <label for="gas-verbrauch"><b>kWh/Jahr</b></label>
+                <input type="number" id="gas-verbrauch" placeholder="z.B. 13000">
+    
+                <label for="gas-arbeitspreis"><b>Arbeitspreis</b></label>
+                <input type="number" id="gas-arbeitspreis" placeholder="z.B. 9,79" step="0.01">
+    
+                <label for="gas-grundpreis"><b>Grundpreis</b></label>
+                <input type="number" id="gas-grundpreis" placeholder="z.B. 123,96" step="0.01">
+    
+                <button class="button" onclick="calculateGas()">Berechnen</button>
+            </div>
+    
+            <div id="gas-result">
+                <h2>Ergebnisse</h2>
+                <table>
+                    <tr>
+                        <th>Beschreibung</th>
+                        <th></th>
+                        <th>Betrag in EUR</th>
+                    </tr>
+                    <tr>
+                        <td>Summe jährlich</td>
+                        <td></td>
+                        <td><span id="gas-summe-jaehrlich"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (11 Abschläge)</td>
+                        <td></td>
+                        <td><span id="gas-abschlag-11"></span></td>
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (12 Abschläge)</td>
+                        <td></td>
+                        <td><span id="gas-abschlag-12"></span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+
+    <script src="abschlag/script.js"></script>
+</body>
+
+</html>

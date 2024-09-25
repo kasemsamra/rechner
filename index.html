@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="KasemSamra">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rechner</title>
+    <link rel="stylesheet" href="./styles.css">
+    <link rel="icon" href="img/icon.png">
+</head>
+
+<body>
+    <div class="loading-screen">
+        <div class="loader"></div>
+        <p class="lod">Loading...</p>
+    </div>
+    <header>
+        <div class="h1div">
+            <h1 class="Rechner">Rechner</h1>
+        </div>
+
+    </header>
+    <br>
+    <br>
+    <main>
+
+        <div class="button">
+            <button onclick="abschlag()">Abschlag Check</button>
+            <button onclick="prognose()">Zählerstand Prognose</button>
+        </div>
+        <div class="button">
+            <button onclick="kubikmeter()">kWh auf Kubikmeter</button>
+            <button onclick="nettozu()">Netto zu Brutto Rechner</button>
+        </div>
+    </main>
+
+    <script src="loadingscr.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

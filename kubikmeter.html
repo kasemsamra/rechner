@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kWh auf Kubikmeter</title>
+    <meta name="author" content="KasemSamra">
+    <link rel="stylesheet" href="kubikmeter/styles.css">
+    <link rel="icon" href="img/icon.png">
+</head>
+<body>
+    <div class="header-container">
+        <button class="zuruck" onclick="index()">
+            <i class="gg-arrow-left-r"></i>
+            <span class="zuru">Zurück</span>
+        </button>
+        <div class="h1div">
+            <h1>kWh auf Kubikmeter</h1>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="form-section">
+            <form id="conversionForm">
+                <label for="kWh">Energieverbrauch (kWh):</label>
+                <input type="number" id="kWh" step="0.01" required>
+                <button type="button" class="berechnen" onclick="convertKWhToM3()">Umrechnen</button>
+            </form>
+            <div id="result"></div>
+        </div>
+    </div>
+</body>
+<script src="kubikmeter/script.js"></script>
+</html>
