@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="KasemSamra">
+    <title>kWh auf Kubikmeter</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+     <link rel="icon" href="bg.jpg">
+    <style>
+        :root {
+            --primary: #e30613;
+            --primary-dark: #bf0b10;
+            --gradient-start: #ff4b1f;
+            --gradient-end: #ff9068;
+            --background: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --text-light: #ffffff;
+            --text-gray: #cccccc;
+            --animation-speed: 0.3s;
+            --shadow-color: rgba(227, 6, 19, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: relative;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            transition: all var(--animation-speed);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .title-container {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .calculator-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+        }
+
+        .input-group {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        input {
+            background: var(--background);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 1rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all var(--animation-speed);
+            width: 100%;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--gradient-end);
+            box-shadow: 0 0 0 3px var(--shadow-color);
+        }
+
+        .calculate-button {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--text-light);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--animation-speed);
+            width: 100%;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .calculate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .calculate-button:active {
+            transform: translateY(0);
+        }
+
+        #result {
+            background: var(--card-bg);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 1.2rem;
+            margin-top: 2rem;
+            transition: all var(--animation-speed);
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        #result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-error {
+            color: var(--gradient-start) !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--gradient-start), var(--gradient-end));
+            border-radius: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .calculator-content {
+                padding: 1rem;
+            }
+
+            .input-group {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+                <span>Zurück</span>
+            </button>
+            <div class="title-container">
+                <h1 class="title">kWh auf Kubikmeter</h1>
+            </div>
+        </div>
+    </header>
+
+    <main class="calculator-content">
+        <div class="input-group">
+            <div class="input-field">
+                <label>Energieverbrauch (kWh)</label>
+                <input type="number" id="kWh" step="0.01" placeholder="z.B. 1000" required>
+            </div>
+            <button class="calculate-button" onclick="convertKWhToM3()">
+                Umrechnen
+            </button>
+        </div>
+
+        <div id="result"></div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        function convertKWhToM3() {
+            const kWh = parseFloat(document.getElementById('kWh').value);
+            const resultDiv = document.getElementById('result');
+            
+            if (isNaN(kWh) || kWh <= 0) {
+                resultDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Bitte geben Sie einen gültigen kWh-Wert ein.';
+                resultDiv.classList.add('result-error');
+            } else {
+                const brennwert = 10;
+                const zustandszahl = 1;
+                const gasverbrauch = kWh / (brennwert * zustandszahl);
+                resultDiv.innerHTML = `<i class="fas fa-check-circle"></i> Gasverbrauch: ${gasverbrauch.toFixed(2)} m³`;
+                resultDiv.classList.remove('result-error');
+            }
+            
+            resultDiv.classList.remove('show');
+            void resultDiv.offsetWidth; 
+            resultDiv.classList.add('show');
+        }
+
+        document.getElementById('kWh').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                convertKWhToM3();
+            }
+        });
+
+        document.getElementById('kWh').addEventListener('input', function(e) {
+            if (this.value < 0) this.value = 0;
+        });
+    </script>
+</body>
+</html>

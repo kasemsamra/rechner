@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="KasemSamra">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ein moderner Energierechner für alle Ihre Berechnungen">
+    <title>Energierechner</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="bg.jpg">
+      <link rel="apple-touch-icon" sizes="180x180" href="bg.jpg">
+    <style>
+        :root {
+            --primary: #e30613;
+            --primary-dark: #bf0b10;
+            --gradient-start: #ff4b1f;
+            --gradient-end: #ff9068;
+            --background: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --text-light: #ffffff;
+            --text-gray: #cccccc;
+            --animation-speed: 0.3s;
+            --shadow-color: rgba(227, 6, 19, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .title-container {
+            display: inline-block;
+            padding: 1.5rem 3rem;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform-style: preserve-3d;
+            perspective: 1000px;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #ffffff, #f0f0f0);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 2px;
+            margin: 0;
+        }
+
+        main {
+            flex: 1;
+            padding: 3rem 2rem;
+            position: relative;
+        }
+
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+            perspective: 1000px;
+        }
+
+        .calculator-card {
+            background: var(--card-bg);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            transition: transform var(--animation-speed), box-shadow var(--animation-speed);
+            position: relative;
+            cursor: pointer;
+        }
+
+        .calculator-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            opacity: 0;
+            transition: opacity var(--animation-speed);
+            z-index: 0;
+        }
+
+        .calculator-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px var(--shadow-color);
+        }
+
+        .calculator-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .card-content {
+            position: relative;
+            z-index: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            height: 100%;
+            min-height: 200px;
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            transition: transform var(--animation-speed);
+        }
+
+        .calculator-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-light);
+            text-align: center;
+            margin: 0;
+        }
+
+        .card-description {
+            color: var(--text-gray);
+            text-align: center;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loader {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            position: relative;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .loader::before {
+            content: '';
+            position: absolute;
+            inset: 5px;
+            background: var(--background);
+            border-radius: 50%;
+        }
+
+        .loader::after {
+            content: '';
+            position: absolute;
+            inset: 15px;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-text {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.95); }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+
+            .calculator-grid {
+                grid-template-columns: 1fr;
+                padding: 0 1rem;
+            }
+
+            .card-content {
+                min-height: 180px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .calculator-card, .loader, .loading-text {
+                animation: none;
+                transition: none;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+        <p class="loading-text">Wird geladen...</p>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <div class="title-container">
+                <h1 class="title">Energierechner</h1>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="calculator-grid">
+            <div class="calculator-card" data-calculator="abschlag">
+                <div class="card-content">
+                    <i class="card-icon fas fa-calculator"></i>
+                    <h2 class="card-title">Abschlag berechnen</h2>
+                    <p class="card-description">Berechnen Sie Ihre monatlichen Abschlagszahlungen basierend auf Ihrem Energieverbrauch</p>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-calculator="prognose">
+                <div class="card-content">
+                    <i class="card-icon fas fa-chart-line"></i>
+                    <h2 class="card-title">Zählerstand Prognose</h2>
+                    <p class="card-description">Erstellen Sie eine Prognose Ihres zukünftigen Zählerstands</p>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-calculator="kubikmeter">
+                <div class="card-content">
+                    <i class="card-icon fas fa-tachometer-alt"></i>
+                    <h2 class="card-title">kWh zu Kubikmeter</h2>
+                    <p class="card-description">Konvertieren Sie Kilowattstunden in Kubikmeter und umgekehrt</p>
+                </div>
+            </div>
+
+            <div class="calculator-card" data-calculator="netto">
+                <div class="card-content">
+                    <i class="card-icon fas fa-euro-sign"></i>
+                    <h2 class="card-title">Netto/Brutto Rechner</h2>
+                    <p class="card-description">Berechnen Sie schnell zwischen Netto- und Bruttobeträgen</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingScreen = document.getElementById('loadingScreen');
+            
+            setTimeout(() => {
+                loadingScreen.style.transition = 'opacity 0.5s ease-out';
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1500);
+
+            document.querySelectorAll('.calculator-card').forEach(card => {
+                card.addEventListener('click', () => {
+                    card.style.transform = 'scale(0.98) translateY(2px)';
+                    setTimeout(() => {
+                        const calculator = card.dataset.calculator;
+                        try {
+                            window.location.href = `${calculator}.html`;
+                        } catch (error) {
+                            console.error(`Navigation error:`, error);
+                            alert('Ein Fehler ist aufgetreten. Bitte versuchen Sie es später erneut.');
+                        }
+                    }, 150);
+                });
+            });
+
+            const cards = document.querySelectorAll('.calculator-card');
+            cards.forEach(card => {
+                card.addEventListener('mousemove', (e) => {
+                    const rect = card.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    
+                    const centerX = rect.width / 2;
+                    const centerY = rect.height / 2;
+                    
+                    const rotateX = (y - centerY) / 20;
+                    const rotateY = -(x - centerX) / 20;
+                    
+                    card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

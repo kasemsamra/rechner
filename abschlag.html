@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="KasemSamra">
+    <title>Abschlag Check</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+     <link rel="icon" href="bg.jpg">
+    <style>
+        :root {
+            --primary: #e30613;
+            --primary-dark: #bf0b10;
+            --gradient-start: #ff4b1f;
+            --gradient-end: #ff9068;
+            --background: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --text-light: #ffffff;
+            --text-gray: #cccccc;
+            --animation-speed: 0.3s;
+            --shadow-color: rgba(227, 6, 19, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: relative;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(0.95); opacity: 0.8; }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            transition: all var(--animation-speed);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .title-container {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .calculator-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: var(--card-bg);
+            border: none;
+            color: var(--text-light);
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--animation-speed);
+            font-weight: 500;
+        }
+
+        .tab-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .tab-button.active {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+        }
+
+        .calculator-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .input-group {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        input {
+            background: var(--background);
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            padding: 0.8rem;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: border-color var(--animation-speed);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--gradient-end);
+        }
+
+        .calculate-button {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--text-light);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all var(--animation-speed);
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .calculate-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-color);
+        }
+
+        .results-table {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 2rem;
+        }
+
+        .results-table th {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--text-light);
+            padding: 1rem;
+            text-align: left;
+        }
+
+        .results-table td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .calculator-content {
+                padding: 1rem;
+            }
+
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+                <span>Zurück</span>
+            </button>
+            <div class="title-container">
+                <h1 class="title">Abschlag Check</h1>
+            </div>
+        </div>
+    </header>
+
+    <div class="calculator-tabs">
+        <button class="tab-button active" onclick="switchTab('strom-et')">
+            <i class="fas fa-bolt"></i> Strom ET
+        </button>
+        <button class="tab-button" onclick="switchTab('strom-dt')">
+            <i class="fas fa-clock"></i> Strom DT
+        </button>
+        <button class="tab-button" onclick="switchTab('gas')">
+            <i class="fas fa-fire"></i> Gas
+        </button>
+    </div>
+
+    <main class="calculator-content">
+        <div class="calculator" id="strom-et">
+            <div class="input-group">
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Jahresverbrauch (kWh)</label>
+                        <input type="number" id="et-verbrauch" placeholder="z.B. 2500">
+                    </div>
+                    <div class="input-field">
+                        <label>Arbeitspreis (ct/kWh)</label>
+                        <input type="number" id="et-arbeitspreis" placeholder="z.B. 28,79" step="0.01">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Grundpreis (€/Jahr)</label>
+                        <input type="number" id="et-grundpreis" placeholder="z.B. 123,96" step="0.01">
+                    </div>
+                </div>
+                <button class="calculate-button" onclick="calculateET()">
+                    Berechnen
+                </button>
+            </div>
+
+            <table class="results-table" id="et-results">
+                <thead>
+                    <tr>
+                        <th>Beschreibung</th>
+                        <th>Betrag</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Summe jährlich</td>
+                        <td id="et-summe">-</td>
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (11 Abschläge)</td>
+                        <td id="et-abschlag-11">-</td>
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (12 Abschläge)</td>
+                        <td id="et-abschlag-12">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="calculator" id="strom-dt" style="display: none;">
+            <div class="input-group">
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>HT-Verbrauch (kWh/Jahr)</label>
+                        <input type="number" id="dt-ht-verbrauch" placeholder="z.B. 1500">
+                    </div>
+                    <div class="input-field">
+                        <label>NT-Verbrauch (kWh/Jahr)</label>
+                        <input type="number" id="dt-nt-verbrauch" placeholder="z.B. 1000">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>HT-Arbeitspreis (ct/kWh)</label>
+                        <input type="number" id="dt-ht-arbeitspreis" placeholder="z.B. 28,79" step="0.01">
+                    </div>
+                    <div class="input-field">
+                        <label>NT-Arbeitspreis (ct/kWh)</label>
+                        <input type="number" id="dt-nt-arbeitspreis" placeholder="z.B. 18,79" step="0.01">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Grundpreis (€/Jahr)</label>
+                        <input type="number" id="dt-grundpreis" placeholder="z.B. 123,96" step="0.01">
+                    </div>
+                </div>
+                <button class="calculate-button" onclick="calculateDT()">
+                    Berechnen
+                </button>
+            </div>
+
+            <table class="results-table" id="dt-results">
+                <thead>
+                    <tr>
+                        <th>Beschreibung</th>
+                        <th>Betrag</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Summe jährlich</td>
+                        <td id="dt-summe">-</td>
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (11 Abschläge)</td>
+                        <td id="dt-abschlag-11">-</td>
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (12 Abschläge)</td>
+                        <td id="dt-abschlag-12">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="calculator" id="gas" style="display: none;">
+            <div class="input-group">
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Jahresverbrauch (kWh)</label>
+                        <input type="number" id="gas-verbrauch" placeholder="z.B. 13000">
+                    </div>
+                    <div class="input-field">
+                        <label>Arbeitspreis (ct/kWh)</label>
+                        <input type="number" id="gas-arbeitspreis" placeholder="z.B. 9,79" step="0.01">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-field">
+                        <label>Grundpreis (€/Jahr)</label>
+                        <input type="number" id="gas-grundpreis" placeholder="z.B. 123,96" step="0.01">
+                    </div>
+                </div>
+                <button class="calculate-button" onclick="calculateGas()">
+                    Berechnen
+                </button>
+            </div>
+
+            <table class="results-table" id="gas-results">
+                <thead>
+                    <tr>
+                        <th>Beschreibung</th>
+                        <th>Betrag</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Summe jährlich</td>
+                        <td id="gas-summe">-</td>
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (11 Abschläge)</td>
+                        <td id="gas-abschlag-11">-</td>
+                    </tr>
+                    <tr>
+                        <td>Monatlicher Abschlag (12 Abschläge)</td>
+                        <td id="gas-abschlag-12">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+        function switchTab(tabId) {
+            document.querySelectorAll('.calculator').forEach(calc => {
+                calc.style.display = 'none';
+            });
+            document.getElementById(tabId).style.display = 'block';
+           
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+        function formatCurrency(value) {
+            return value.toFixed(2).replace('.', ',') + ' €';
+        }
+        function calculateET() {
+            const verbrauch = parseFloat(document.getElementById('et-verbrauch').value) || 0;
+            const arbeitspreis = parseFloat(document.getElementById('et-arbeitspreis').value) || 0;
+            const grundpreis = parseFloat(document.getElementById('et-grundpreis').value) || 0;
+
+            const jahreskosten = (verbrauch * arbeitspreis / 100) + grundpreis;
+            const abschlag11 = jahreskosten / 11;
+            const abschlag12 = jahreskosten / 12;
+
+            document.getElementById('et-summe').textContent = formatCurrency(jahreskosten);
+            document.getElementById('et-abschlag-11').textContent = formatCurrency(Math.round(abschlag11));
+            document.getElementById('et-abschlag-12').textContent = formatCurrency(Math.round(abschlag12));
+
+            animateResults('et-results');
+        }
+
+        function calculateDT() {
+            const htVerbrauch = parseFloat(document.getElementById('dt-ht-verbrauch').value) || 0;
+            const ntVerbrauch = parseFloat(document.getElementById('dt-nt-verbrauch').value) || 0;
+            const htArbeitspreis = parseFloat(document.getElementById('dt-ht-arbeitspreis').value) || 0;
+            const ntArbeitspreis = parseFloat(document.getElementById('dt-nt-arbeitspreis').value) || 0;
+            const grundpreis = parseFloat(document.getElementById('dt-grundpreis').value) || 0;
+
+            const jahreskosten = (htVerbrauch * htArbeitspreis / 100) + 
+                               (ntVerbrauch * ntArbeitspreis / 100) + 
+                               grundpreis;
+            const abschlag11 = jahreskosten / 11;
+            const abschlag12 = jahreskosten / 12;
+
+            document.getElementById('dt-summe').textContent = formatCurrency(jahreskosten);
+            document.getElementById('dt-abschlag-11').textContent = formatCurrency(Math.round(abschlag11));
+            document.getElementById('dt-abschlag-12').textContent = formatCurrency(Math.round(abschlag12));
+
+            animateResults('dt-results');
+        }
+
+        function calculateGas() {
+            const verbrauch = parseFloat(document.getElementById('gas-verbrauch').value) || 0;
+            const arbeitspreis = parseFloat(document.getElementById('gas-arbeitspreis').value) || 0;
+            const grundpreis = parseFloat(document.getElementById('gas-grundpreis').value) || 0;
+
+            const jahreskosten = (verbrauch * arbeitspreis / 100) + grundpreis;
+            const abschlag11 = jahreskosten / 11;
+            const abschlag12 = jahreskosten / 12;
+
+            document.getElementById('gas-summe').textContent = formatCurrency(jahreskosten);
+            document.getElementById('gas-abschlag-11').textContent = formatCurrency(Math.round(abschlag11));
+            document.getElementById('gas-abschlag-12').textContent = formatCurrency(Math.round(abschlag12));
+
+            animateResults('gas-results');
+        }
+
+        function animateResults(tableId) {
+            const table = document.getElementById(tableId);
+            table.style.animation = 'none';
+            table.offsetHeight; 
+            table.style.animation = 'fadeIn 0.5s ease-out';
+        }
+
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', (e) => {
+                let value = e.target.value;
+                value = value.replace(',', '.');
+                if (value < 0) value = 0;
+                e.target.value = value;
+            });
+        });
+
+        document.querySelector('.tab-button').click();
+    </script>
+</body>
+</html>
