@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="de">
+
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="KasemSamra">
@@ -8,7 +9,7 @@
     <title>Energierechner</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" href="bg.jpg">
-      <link rel="apple-touch-icon" sizes="180x180" href="bg.jpg">
+    <link rel="apple-touch-icon" sizes="180x180" href="bg.jpg">
     <style>
         :root {
             --primary: #e30613;
@@ -205,12 +206,23 @@
         }
 
         @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.8; transform: scale(0.95); }
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.8;
+                transform: scale(0.95);
+            }
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
 
         @media (max-width: 768px) {
@@ -229,7 +241,10 @@
         }
 
         @media (prefers-reduced-motion: reduce) {
-            .calculator-card, .loader, .loading-text {
+
+            .calculator-card,
+            .loader,
+            .loading-text {
                 animation: none;
                 transition: none;
             }
@@ -257,7 +272,8 @@
                 <div class="card-content">
                     <i class="card-icon fas fa-calculator"></i>
                     <h2 class="card-title">Abschlag berechnen</h2>
-                    <p class="card-description">Berechnen Sie Ihre monatlichen Abschlagszahlungen basierend auf Ihrem Energieverbrauch</p>
+                    <p class="card-description">Berechnen Sie Ihre monatlichen Abschlagszahlungen basierend auf Ihrem
+                        Energieverbrauch</p>
                 </div>
             </div>
 
@@ -284,13 +300,22 @@
                     <p class="card-description">Berechnen Sie schnell zwischen Netto- und Bruttobeträgen</p>
                 </div>
             </div>
+
+            <div class="calculator-card" data-calculator="grammatik">
+                <div class="card-content">
+                    <i class="fa-solid fa-spell-check fa-2xl" style="color: #e30613;"></i>
+                    <br>
+                    <h2 class="card-title">Grammatik und Rechtschreibprüfung</h2>
+                    <p class="card-description">Texte auf Grammatik und Rechtschreibfehler prüfen</p>
+                </div>
+            </div>
         </div>
     </main>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const loadingScreen = document.getElementById('loadingScreen');
-            
+
             setTimeout(() => {
                 loadingScreen.style.transition = 'opacity 0.5s ease-out';
                 loadingScreen.style.opacity = '0';
@@ -320,16 +345,16 @@
                     const rect = card.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-                    
+
                     const centerX = rect.width / 2;
                     const centerY = rect.height / 2;
-                    
+
                     const rotateX = (y - centerY) / 20;
                     const rotateY = -(x - centerX) / 20;
-                    
+
                     card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
                 });
-                
+
                 card.addEventListener('mouseleave', () => {
                     card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) scale(1)';
                 });
@@ -337,4 +362,5 @@
         });
     </script>
 </body>
+
 </html>
