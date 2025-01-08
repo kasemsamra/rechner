@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammatik und Rechtschreibprüfung</title>
+    <meta name="author" content="KasemSamra">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="icon" href="bg.jpg">
+    <style>
+        :root {
+            --primary: #e30613;
+            --primary-dark: #bf0b10;
+            --gradient-start: #ff4b1f;
+            --gradient-end: #ff9068;
+            --background: #1a1a1a;
+            --card-bg: #2a2a2a;
+            --text-light: #ffffff;
+            --text-gray: #cccccc;
+            --animation-speed: 0.3s;
+            --shadow-color: rgba(227, 6, 19, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background-color: var(--background);
+            color: var(--text-light);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        .loading-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--background);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .loader {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            position: relative;
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .back-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-light);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            transition: all var(--animation-speed);
+            backdrop-filter: blur(10px);
+        }
+
+        .back-button:hover {
+            transform: translateX(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .title-container {
+            flex-grow: 1;
+            text-align: center;
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text-light);
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        main {
+            flex: 1;
+            padding: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .text-check-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-size: 1rem;
+            transition: all var(--animation-speed);
+            margin-bottom: 1.5rem;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--shadow-color);
+        }
+
+        .check-button {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            color: var(--text-light);
+            border: none;
+            padding: 1.25rem 2.5rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            display: block;
+            transition: all var(--animation-speed);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .check-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--gradient-end), var(--gradient-start));
+            opacity: 0;
+            transition: opacity var(--animation-speed);
+        }
+
+        .check-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px var(--shadow-color);
+        }
+
+        .check-button:hover::before {
+            opacity: 1;
+        }
+
+        .check-button span {
+            position: relative;
+            z-index: 1;
+        }
+
+        #result {
+            margin-top: 2rem;
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: left;
+            font-size: 1rem;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease-out;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        #result.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-content {
+            background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px var(--shadow-color);
+        }
+
+        .error-message {
+            color: var(--primary);
+            background: rgba(227, 6, 19, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            border-left: 4px solid var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            main {
+                padding: 1rem;
+            }
+
+            .text-check-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader"></div>
+    </div>
+
+    <header>
+        <div class="header-content">
+            <button class="back-button" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i>
+                <span>Zurück</span>
+            </button>
+            <div class="title-container">
+                <h1 class="title">Grammatik und Rechtschreibprüfung</h1>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="text-check-card">
+            <textarea id="textInput" placeholder="Geben Sie Ihren Text hier ein..."></textarea>
+            <button class="check-button" onclick="checkText()">
+                <span>Text prüfen</span>
+            </button>
+
+            <div id="result"></div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                const loadingScreen = document.getElementById('loadingScreen');
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1000);
+        });
+
+        async function checkText() {
+            const text = document.getElementById('textInput').value;
+            const apiUrl = 'https://api.languagetool.org/v2/check';
+
+            const resultElement = document.getElementById('result');
+            resultElement.classList.remove('show');
+            resultElement.innerHTML = '<p class="loading">Überprüfung läuft...</p>';
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        text: text,
+                        language: 'de-DE',
+                        enabledOnly: 'false',
+                    }),
+                });
+
+                const data = await response.json();
+                let correctedText = text;
+
+                if (data.matches && data.matches.length > 0) {
+                    data.matches.sort((a, b) => b.context.offset - a.context.offset);
+                    data.matches.forEach(match => {
+                        const error = match.context.text.substring(match.context.offset, match.context.offset + match.context.length);
+                        const suggestion = match.replacements[0]?.value || error;
+                        correctedText = correctedText.substring(0, match.context.offset) +
+                            suggestion +
+                            correctedText.substring(match.context.offset + match.context.length);
+                    });
+                }
+                resultElement.innerHTML = `
+                    <div class="result-content">
+                        <h2>Korrigierter Text:</h2>
+                        <p>${correctedText}</p>
+                    </div>
+                `;
+                resultElement.classList.add('show');
+            } catch (error) {
+                resultElement.innerHTML = `<div class="error-message">Ein Fehler ist aufgetreten: ${error.message}</div>`;
+                resultElement.classList.add('show');
+            }
+        }
+    </script>
+</body>
+
+</html>
