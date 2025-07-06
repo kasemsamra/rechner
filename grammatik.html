@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="de">
 
@@ -307,47 +308,51 @@
 
         async function checkText() {
             const text = document.getElementById('textInput').value;
-            const apiUrl = 'https://api.languagetool.org/v2/check';
+            const apiKey = 'AIzaSyDyJK-KojHOAiHS5cboCaghpw29GeNH8MA'; 
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
             const resultElement = document.getElementById('result');
             resultElement.classList.remove('show');
             resultElement.innerHTML = '<p class="loading">Überprüfung läuft...</p>';
 
+            if (!text.trim()) {
+                resultElement.innerHTML = `<div class="error-message">Bitte geben Sie Text zur Überprüfung ein.</div>`;
+                resultElement.classList.add('show');
+                return;
+            }
+
             try {
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Content-Type': 'application/json',
                     },
-                    body: new URLSearchParams({
-                        text: text,
-                        language: 'de-DE',
-                        enabledOnly: 'false',
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `Bitte korrigieren Sie die Grammatik und Rechtschreibung des folgenden deutschen Textes. Geben Sie nur den korrigierten Text zurück, ohne zusätzliche Erklärungen oder Formatierungen. Wenn der Text bereits korrekt ist, geben Sie ihn unverändert zurück.\n\nText: ${text}`
+                            }]
+                        }]
                     }),
                 });
 
                 const data = await response.json();
-                let correctedText = text;
 
-                if (data.matches && data.matches.length > 0) {
-                    data.matches.sort((a, b) => b.context.offset - a.context.offset);
-                    data.matches.forEach(match => {
-                        const error = match.context.text.substring(match.context.offset, match.context.offset + match.context.length);
-                        const suggestion = match.replacements[0]?.value || error;
-                        correctedText = correctedText.substring(0, match.context.offset) +
-                            suggestion +
-                            correctedText.substring(match.context.offset + match.context.length);
-                    });
+                if (response.ok && data.candidates && data.candidates.length > 0) {
+                    const correctedText = data.candidates[0].content.parts[0].text;
+                    resultElement.innerHTML = `
+                        <div class="result-content">
+                            <h2>Korrigierter Text:</h2>
+                            <p>${correctedText}</p>
+                        </div>
+                    `;
+                } else {
+                    const errorMessage = data.error ? data.error.message : 'Unbekannter Fehler bei der Gemini API.';
+                    resultElement.innerHTML = `<div class="error-message">Ein Fehler ist aufgetreten: ${errorMessage}</div>`;
                 }
-                resultElement.innerHTML = `
-                    <div class="result-content">
-                        <h2>Korrigierter Text:</h2>
-                        <p>${correctedText}</p>
-                    </div>
-                `;
                 resultElement.classList.add('show');
             } catch (error) {
-                resultElement.innerHTML = `<div class="error-message">Ein Fehler ist aufgetreten: ${error.message}</div>`;
+                resultElement.innerHTML = `<div class="error-message">Ein Fehler ist aufgetreten: ${error.message}. Bitte überprüfen Sie Ihre Internetverbindung oder die API-Schlüssel.</div>`;
                 resultElement.classList.add('show');
             }
         }
